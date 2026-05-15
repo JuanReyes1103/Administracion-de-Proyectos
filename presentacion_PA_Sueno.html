@@ -1,0 +1,1305 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sistema PA & Sueño — Reporte 15</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --navy: #0D1B35;
+    --navy-mid: #1A2E52;
+    --navy-light: #243A62;
+    --accent: #4FC8E8;
+    --accent2: #A78BFA;
+    --accent3: #34D399;
+    --amber: #FBBF24;
+    --red: #F87171;
+    --white: #FFFFFF;
+    --off-white: #F0F4FF;
+    --muted: #94A3B8;
+    --card-bg: rgba(255,255,255,0.05);
+    --card-border: rgba(255,255,255,0.1);
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--navy);
+    color: var(--white);
+    line-height: 1.6;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: 'Syne', sans-serif;
+  }
+
+  .presentation {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 0 60px;
+  }
+
+  /* NAV */
+  .nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(13,27,53,0.95);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--card-border);
+    padding: 12px 32px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .nav-badge {
+    background: var(--accent);
+    color: var(--navy);
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    letter-spacing: .5px;
+    white-space: nowrap;
+  }
+  .nav-sep { color: var(--muted); font-size: 12px; }
+  .nav a {
+    font-size: 12px;
+    color: var(--muted);
+    text-decoration: none;
+    padding: 4px 8px;
+    border-radius: 6px;
+    transition: all .2s;
+    white-space: nowrap;
+  }
+  .nav a:hover { color: var(--white); background: var(--card-bg); }
+
+  /* SLIDE BASE */
+  .slide {
+    padding: 64px 48px;
+    border-bottom: 1px solid var(--card-border);
+    position: relative;
+  }
+  .slide:last-child { border-bottom: none; }
+
+  /* COVER */
+  .slide-cover {
+    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 50%, #0F2A4A 100%);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 80px 64px;
+    position: relative;
+    overflow: hidden;
+  }
+  .slide-cover::before {
+    content: '';
+    position: absolute;
+    top: -120px; right: -120px;
+    width: 500px; height: 500px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(79,200,232,0.12) 0%, transparent 70%);
+  }
+  .slide-cover::after {
+    content: '';
+    position: absolute;
+    bottom: -80px; left: -80px;
+    width: 400px; height: 400px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(167,139,250,0.1) 0%, transparent 70%);
+  }
+  .cover-tag {
+    font-family: 'Syne', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 24px;
+  }
+  .cover-title {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(36px, 5vw, 56px);
+    font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: 12px;
+  }
+  .cover-title span { color: var(--accent); }
+  .cover-subtitle {
+    font-size: 18px;
+    color: var(--muted);
+    margin-bottom: 40px;
+  }
+  .cover-team {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+    max-width: 700px;
+    margin-bottom: 40px;
+  }
+  .member-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 10px;
+    padding: 12px 16px;
+  }
+  .member-name {
+    font-family: 'Syne', sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--white);
+  }
+  .member-mat {
+    font-size: 11px;
+    color: var(--accent);
+    margin-top: 2px;
+  }
+  .cover-meta {
+    display: flex;
+    gap: 32px;
+    flex-wrap: wrap;
+  }
+  .meta-item { font-size: 13px; color: var(--muted); }
+  .meta-item strong { color: var(--white); font-weight: 500; display: block; }
+
+  /* SECTION LABEL */
+  .section-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+  .slide-title {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(24px, 3.5vw, 36px);
+    font-weight: 800;
+    margin-bottom: 32px;
+    line-height: 1.15;
+  }
+  .slide-title span { color: var(--accent); }
+
+  /* CARD */
+  .card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 14px;
+    padding: 20px 24px;
+  }
+
+  /* GRID LAYOUTS */
+  .grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 16px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 16px; }
+  .grid-4 { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 12px; }
+  .grid-auto { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; }
+
+  @media (max-width: 640px) {
+    .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+    .slide { padding: 40px 24px; }
+    .slide-cover { padding: 60px 24px; }
+  }
+
+  /* PROCESS GROUPS */
+  .process-step {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    padding: 20px;
+    position: relative;
+  }
+  .step-num {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: var(--navy);
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 14px;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 12px;
+  }
+  .step-label {
+    font-family: 'Syne', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 6px;
+  }
+  .step-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    margin-bottom: 8px;
+  }
+  .step-body { font-size: 13px; color: var(--muted); line-height: 1.6; }
+
+  /* FEATURE LIST */
+  .feature-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+  .feature-list li {
+    display: flex; align-items: flex-start; gap: 10px;
+    font-size: 14px; color: var(--muted); line-height: 1.5;
+  }
+  .feature-list li::before {
+    content: '▸';
+    color: var(--accent);
+    font-size: 12px;
+    flex-shrink: 0;
+    margin-top: 3px;
+  }
+
+  /* KPI / METRIC */
+  .metric-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+  }
+  .metric-value {
+    font-family: 'Syne', sans-serif;
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--accent);
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .metric-label { font-size: 12px; color: var(--muted); line-height: 1.4; }
+
+  /* TABLE */
+  .styled-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  .styled-table th {
+    background: rgba(79,200,232,0.12);
+    color: var(--accent);
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    padding: 10px 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--card-border);
+  }
+  .styled-table td {
+    padding: 9px 12px;
+    color: var(--muted);
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    vertical-align: top;
+  }
+  .styled-table tr:hover td { background: rgba(255,255,255,0.02); }
+  .styled-table td:first-child { color: var(--white); font-weight: 500; }
+
+  /* BADGE */
+  .badge {
+    display: inline-block;
+    font-size: 10px;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    letter-spacing: .5px;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 20px;
+    vertical-align: middle;
+  }
+  .badge-blue { background: rgba(79,200,232,0.15); color: var(--accent); }
+  .badge-purple { background: rgba(167,139,250,0.15); color: var(--accent2); }
+  .badge-green { background: rgba(52,211,153,0.15); color: var(--accent3); }
+  .badge-amber { background: rgba(251,191,36,0.15); color: var(--amber); }
+  .badge-red { background: rgba(248,113,113,0.15); color: var(--red); }
+
+  /* RISK MATRIX */
+  .risk-row {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin-bottom: 8px;
+    display: grid;
+    grid-template-columns: 56px 1fr auto;
+    gap: 12px;
+    align-items: start;
+  }
+  .risk-id {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 12px;
+    color: var(--accent);
+  }
+  .risk-name { font-size: 13px; font-weight: 500; color: var(--white); margin-bottom: 3px; }
+  .risk-desc { font-size: 12px; color: var(--muted); }
+
+  /* DIVIDER */
+  .divider {
+    width: 48px; height: 3px;
+    background: var(--accent);
+    border-radius: 2px;
+    margin: 16px 0 24px;
+  }
+
+  /* TWO COL WITH SIDEBAR */
+  .two-col { display: grid; grid-template-columns: 1fr 280px; gap: 24px; }
+  @media (max-width: 700px) { .two-col { grid-template-columns: 1fr; } }
+
+  /* TIMELINE */
+  .timeline { position: relative; padding-left: 24px; }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 7px; top: 8px; bottom: 8px;
+    width: 1px;
+    background: var(--card-border);
+  }
+  .tl-item { position: relative; margin-bottom: 16px; }
+  .tl-dot {
+    position: absolute;
+    left: -24px; top: 5px;
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    background: var(--accent);
+    border: 2px solid var(--navy);
+  }
+  .tl-phase {
+    font-family: 'Syne', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    color: var(--accent);
+    margin-bottom: 2px;
+  }
+  .tl-name { font-size: 14px; font-weight: 500; color: var(--white); }
+  .tl-date { font-size: 12px; color: var(--muted); }
+
+  /* CHECK LIST */
+  .check-item {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 10px 14px;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 8px;
+    margin-bottom: 6px;
+  }
+  .check-icon { color: var(--accent3); font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+  .check-label { font-size: 13px; color: var(--white); font-weight: 500; margin-bottom: 2px; }
+  .check-sub { font-size: 12px; color: var(--muted); }
+
+  /* BUDGET BAR */
+  .budget-bar-container { margin-bottom: 12px; }
+  .budget-bar-header { display: flex; justify-content: space-between; margin-bottom: 4px; }
+  .budget-bar-label { font-size: 13px; color: var(--white); }
+  .budget-bar-amount { font-size: 13px; color: var(--accent); font-family: 'Syne', sans-serif; font-weight: 700; }
+  .budget-bar-track {
+    height: 8px; background: rgba(255,255,255,0.08); border-radius: 4px; overflow: hidden;
+  }
+  .budget-bar-fill { height: 100%; border-radius: 4px; }
+
+  /* SECTION DIVIDER SLIDE */
+  .slide-section {
+    background: linear-gradient(135deg, var(--navy-mid) 0%, var(--navy) 100%);
+    padding: 64px 48px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 280px;
+    position: relative;
+    overflow: hidden;
+    border-bottom: 1px solid var(--card-border);
+  }
+  .slide-section::after {
+    content: attr(data-num);
+    position: absolute;
+    right: 48px; top: 50%;
+    transform: translateY(-50%);
+    font-family: 'Syne', sans-serif;
+    font-size: 120px;
+    font-weight: 800;
+    color: rgba(255,255,255,0.03);
+    line-height: 1;
+    pointer-events: none;
+  }
+
+  /* PILL tags */
+  .pill-group { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+  .pill {
+    font-size: 12px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    border: 1px solid var(--card-border);
+    color: var(--muted);
+  }
+
+  /* FOOTER */
+  .slide-footer {
+    padding: 32px 48px;
+    border-top: 1px solid var(--card-border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .footer-left { font-size: 13px; color: var(--muted); }
+  .footer-right {
+    font-family: 'Syne', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: 1px;
+  }
+
+  /* scroll hint */
+  .scroll-hint {
+    text-align: center;
+    font-size: 12px;
+    color: var(--muted);
+    padding: 24px;
+    letter-spacing: 1px;
+  }
+
+  /* Scope item card */
+  .scope-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    padding: 18px 20px;
+  }
+  .scope-card h4 {
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    margin-bottom: 10px;
+  }
+
+  .highlight-box {
+    background: rgba(79,200,232,0.07);
+    border: 1px solid rgba(79,200,232,0.2);
+    border-radius: 10px;
+    padding: 16px 20px;
+    font-size: 14px;
+    color: var(--off-white);
+    line-height: 1.6;
+  }
+  .highlight-box strong { color: var(--accent); }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <span class="nav-badge">Equipo 2</span>
+  <span class="nav-sep">·</span>
+  <a href="#cover">Portada</a>
+  <a href="#intro">Introducción</a>
+  <a href="#alcance">Alcance</a>
+  <a href="#presupuesto">Presupuesto</a>
+  <a href="#cronograma">Cronograma</a>
+  <a href="#calidad">Calidad</a>
+  <a href="#riesgos">Riesgos</a>
+  <a href="#adquisiciones">Adquisiciones</a>
+  <a href="#cierre">Cierre</a>
+</nav>
+
+<div class="presentation">
+
+<!-- ══════════ COVER ══════════ -->
+<section class="slide-cover" id="cover">
+  <div class="cover-tag">Reporte 15 · Administración de Proyectos de Software</div>
+  <h1 class="cover-title">Sistema <span>PA &amp; Sueño</span><br>Cierre y Documentación</h1>
+  <p class="cover-subtitle">Aplicación web de monitoreo médico · Presión Arterial y Calidad del Sueño</p>
+
+  <div class="cover-team">
+    <div class="member-card">
+      <div class="member-name">Dariana Valeria Echeverria Salvador</div>
+      <div class="member-mat">220300786</div>
+    </div>
+    <div class="member-card">
+      <div class="member-name">Samantha Camila Durán Gonzalez</div>
+      <div class="member-mat">220300741</div>
+    </div>
+    <div class="member-card">
+      <div class="member-name">Yeshua David Estrada Cherres</div>
+      <div class="member-mat">220300798</div>
+    </div>
+    <div class="member-card">
+      <div class="member-name">Jonathan Isai Chi Chan</div>
+      <div class="member-mat">220300749</div>
+    </div>
+    <div class="member-card">
+      <div class="member-name">Juan Daniel Ferrer Reyes</div>
+      <div class="member-mat">220300774</div>
+    </div>
+  </div>
+
+  <div class="cover-meta">
+    <div class="meta-item"><strong>Universidad del Caribe</strong>Cancún, Quintana Roo</div>
+    <div class="meta-item"><strong>Programa Educativo</strong>Ing. en Datos e Inteligencia Organizacional</div>
+    <div class="meta-item"><strong>Profesor</strong>Juan Manuel Rodríguez Santiago</div>
+    <div class="meta-item"><strong>Fecha</strong>13 de Mayo, 2026</div>
+  </div>
+</section>
+
+<!-- ══════════ SECTION: INTRO ══════════ -->
+<section class="slide-section" data-num="01" id="intro">
+  <div class="section-num">Sección 01</div>
+  <h2 class="slide-title">Introducción al Proyecto</h2>
+  <p style="color:var(--muted); font-size:15px; max-width:560px;">Marco metodológico PMI, descripción del sistema y los 5 grupos de procesos aplicados.</p>
+</section>
+
+<!-- 1.1 PMI -->
+<section class="slide" style="background: linear-gradient(180deg, rgba(26,46,82,0.3) 0%, transparent 100%);">
+  <div class="section-num">01.1 — ¿Qué es el PMI?</div>
+  <h2 class="slide-title">Project Management <span>Institute</span></h2>
+  <div class="two-col">
+    <div>
+      <p style="font-size:15px; color:var(--muted); line-height:1.7; margin-bottom:20px;">
+        El PMI es el instituto internacional más reconocido para la gestión profesional de proyectos. Fundado en 1969 en EE.UU., con presencia en más de 200 países. Su guía principal es el <strong style="color:var(--white)">PMBOK® Guide (7ª edición)</strong> — actualmente orientada a principios de gestión y dominios de desempeño.
+      </p>
+      <div class="highlight-box">
+        <strong>Nota clave:</strong> El PMBOK no es una metodología rígida. Es un conjunto de buenas prácticas adaptable a proyectos predictivos (cascada), ágiles o híbridos.
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <div class="metric-card">
+        <div class="metric-value">200+</div>
+        <div class="metric-label">Países con presencia PMI</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-value">7ª</div>
+        <div class="metric-label">Edición actual del PMBOK®</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-value" style="color:var(--accent2)">PMP</div>
+        <div class="metric-label">Certificación más reconocida</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 1.2 Descripción -->
+<section class="slide">
+  <div class="section-num">01.2 — Descripción del Proyecto</div>
+  <h2 class="slide-title">Sistema <span>PA &amp; Sueño</span></h2>
+  <p style="font-size:14px; color:var(--muted); margin-bottom:24px; max-width:640px;">Aplicación web de monitoreo médico para seguimiento simultáneo de presión arterial y calidad del sueño, dirigida a médicos y personal de salud.</p>
+  <div class="grid-3">
+    <div class="scope-card">
+      <h4>Panel General</h4>
+      <ul class="feature-list">
+        <li>Priorización clínica automática</li>
+        <li>Alertas HTA Grado 1 y 2</li>
+        <li>Contadores por categoría clínica</li>
+        <li>Gráficas comparativas entre pacientes</li>
+      </ul>
+    </div>
+    <div class="scope-card">
+      <h4>Registro Médico</h4>
+      <ul class="feature-list">
+        <li>Listado con números de expediente</li>
+        <li>Mediciones de PA y sueño</li>
+        <li>Alertas automáticas por umbral</li>
+        <li>Exportación e importación CSV</li>
+      </ul>
+    </div>
+    <div class="scope-card">
+      <h4>Análisis Avanzado</h4>
+      <ul class="feature-list">
+        <li>Gráficas de tendencia por paciente</li>
+        <li>Correlación sueño vs. sistólica</li>
+        <li>Recomendaciones clínicas IA</li>
+        <li>Vista estrés vs. presión arterial</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- 1.3 Grupos de Procesos -->
+<section class="slide">
+  <div class="section-num">01.3 — Los 5 Grupos de Procesos PMI</div>
+  <h2 class="slide-title">Aplicación al <span>Proyecto</span></h2>
+  <div class="grid-auto">
+    <div class="process-step">
+      <div class="step-num">1</div>
+      <div class="step-label">Inicio</div>
+      <div class="step-title">Definición formal</div>
+      <div class="step-body">Se definió el proyecto como herramienta de monitoreo. Interesados identificados: médicos, 4 pacientes registrados y equipo de desarrollo.</div>
+    </div>
+    <div class="process-step">
+      <div class="step-num" style="background:var(--accent2)">2</div>
+      <div class="step-label">Planificación</div>
+      <div class="step-title">Alcance completo</div>
+      <div class="step-body">Módulos, cronograma, presupuesto, plan de riesgos y criterios de calidad AHA/ACC 2017 y PSQI.</div>
+    </div>
+    <div class="process-step">
+      <div class="step-num" style="background:var(--accent3)">3</div>
+      <div class="step-label">Ejecución</div>
+      <div class="step-title">Desarrollo del sistema</div>
+      <div class="step-body">Panel general, alertas clínicas, formularios, clasificación automática HTA, gráficas y recomendaciones por IA.</div>
+    </div>
+    <div class="process-step">
+      <div class="step-num" style="background:var(--amber)">4</div>
+      <div class="step-label">Monitoreo</div>
+      <div class="step-title">Control de calidad</div>
+      <div class="step-body">Verificación de alertas, clasificación AHA 2017, gráficas con datos reales y recomendaciones correctas.</div>
+    </div>
+    <div class="process-step">
+      <div class="step-num" style="background:var(--red)">5</div>
+      <div class="step-label">Cierre</div>
+      <div class="step-title">Entrega formal</div>
+      <div class="step-body">Sistema funcional, manuales de usuario y técnico documentados, operativo para el personal médico.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ SECTION: ALCANCE ══════════ -->
+<section class="slide-section" data-num="02" id="alcance">
+  <div class="section-num">Sección 02</div>
+  <h2 class="slide-title">El Alcance del Proyecto</h2>
+  <p style="color:var(--muted); font-size:15px; max-width:560px;">Módulos funcionales, requisitos no funcionales y exclusiones de la versión actual.</p>
+</section>
+
+<!-- Alcance overview -->
+<section class="slide">
+  <div class="section-num">02.1-02.4 — Módulos Funcionales</div>
+  <h2 class="slide-title">Funcionalidades <span>Desarrolladas</span></h2>
+  <div class="grid-2" style="margin-bottom:20px;">
+    <div class="scope-card">
+      <h4>2.1 Panel General</h4>
+      <ul class="feature-list">
+        <li>Alertas de grupo HTA G2 (prioridad alta) y G1 (seguimiento)</li>
+        <li>Contadores: Crisis, HTA G2, HTA G1, Elevada, Normal, Con sueño</li>
+        <li>Gráficas: distribución clínica, sueño promedio, sistólica y diastólica</li>
+        <li>Tabla resumen multi-paciente ordenada por prioridad</li>
+      </ul>
+    </div>
+    <div class="scope-card">
+      <h4>2.2 Gestión de Pacientes</h4>
+      <ul class="feature-list">
+        <li>4 pacientes: Ana García (EXP-001), Roberto Mendez (EXP-002), María Torres (EXP-003), Carlos Ruiz (EXP-004)</li>
+        <li>Búsqueda en tiempo real por nombre o expediente</li>
+        <li>Formulario de nuevo paciente con 7 campos</li>
+        <li>Eliminación con confirmación y restauración de datos de ejemplo</li>
+      </ul>
+    </div>
+    <div class="scope-card">
+      <h4>2.3 Registro PA</h4>
+      <ul class="feature-list">
+        <li>Sistólica (70–250 mmHg) y diastólica (40–150 mmHg) obligatorias</li>
+        <li>Pulso, brazo, posición, contexto, fecha/hora y notas</li>
+        <li>Clasificación automática: Normal / Elevada / HTA G1 / HTA G2</li>
+      </ul>
+    </div>
+    <div class="scope-card">
+      <h4>2.4 Registro de Sueño</h4>
+      <ul class="feature-list">
+        <li>Cálculo automático de duración (hh:mm)</li>
+        <li>Calidad 1–5 estrellas. Interrupciones nocturnas</li>
+        <li>Factores: estrés (0-10), actividad física, cafeína, alcohol</li>
+        <li>Clasificación: Óptimo ≥7h · Regular 5–7h · Deficiente &lt;5h</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- Alcance 2.5 - 2.8 -->
+<section class="slide">
+  <div class="section-num">02.5-02.8 — Dashboards, Correlación y UX</div>
+  <h2 class="slide-title">Resumen, Correlación <span>y Navegación</span></h2>
+  <div class="grid-2" style="margin-bottom:20px;">
+    <div class="scope-card">
+      <h4>2.5 Dashboards</h4>
+      <ul class="feature-list">
+        <li>Presión arterial: promedio sistólica/diastólica/pulso, máx/mín y total mediciones</li>
+        <li>Gráfica de líneas de tendencia últimos registros</li>
+        <li>Sueño: promedio horas/noche, calidad promedio, estrés, total registros</li>
+        <li>Gráfica de barras por noche codificada por calidad</li>
+      </ul>
+    </div>
+    <div class="scope-card">
+      <h4>2.6 Recomendaciones Clínicas</h4>
+      <ul class="feature-list">
+        <li>SEGUIMIENTO: resumen del estado clínico</li>
+        <li>PLAN DE EJERCICIO: caminata 8 semanas progresivo</li>
+        <li>EJERCICIOS ESPECÍFICOS: rutina isométrica para HTA</li>
+        <li>NUTRICIÓN PRÁCTICA: reducción de sodio sin sacrificar sabor</li>
+      </ul>
+    </div>
+    <div class="scope-card">
+      <h4>2.7 Correlación</h4>
+      <ul class="feature-list">
+        <li>Dispersión: Sueño vs. Sistólica (horas en eje X, PA en eje Y)</li>
+        <li>Dispersión: Estrés vs. Sistólica</li>
+        <li>Tendencia combinada (Sueño + PA) a lo largo del tiempo</li>
+      </ul>
+    </div>
+    <div class="scope-card">
+      <h4>2.8 UX / Navegación</h4>
+      <ul class="feature-list">
+        <li>Pestañas: Resumen · PA · Sueño · Correlación · Recomendaciones</li>
+        <li>Indicadores visuales: verde (normal) · amarillo (HTA G1) · rojo (HTA G2)</li>
+        <li>Exportar/importar datos. Modo oscuro. Responsive</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- Req. No Funcionales & Exclusiones -->
+<section class="slide">
+  <div class="section-num">02.9-02.10 — Requisitos No Funcionales y Exclusiones</div>
+  <h2 class="slide-title">Calidad Técnica <span>y Límites</span></h2>
+  <div class="grid-2">
+    <div>
+      <table class="styled-table">
+        <thead>
+          <tr><th>Atributo</th><th>Especificación</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Persistencia</td><td>Datos entre sesiones del navegador</td></tr>
+          <tr><td>Rendimiento</td><td>Carga de gráficas en &lt; 2 segundos</td></tr>
+          <tr><td>Usabilidad</td><td>Registro PA &lt;60 s · Sueño &lt;90 s</td></tr>
+          <tr><td>Compatibilidad</td><td>Chrome, Firefox, Edge, Safari</td></tr>
+          <tr><td>Idioma</td><td>Español latinoamericano</td></tr>
+          <tr><td>Seguridad</td><td>Datos locales en navegador (sin auth en v1)</td></tr>
+          <tr><td>Escalabilidad</td><td>Sin límite de pacientes (validado con 5)</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div>
+      <div style="margin-bottom:12px; font-family:'Syne',sans-serif; font-size:13px; font-weight:700; color:var(--red); text-transform:uppercase; letter-spacing:.5px;">Fuera de Alcance (v1)</div>
+      <ul class="feature-list">
+        <li>No incluye generación automática de recetas médicas</li>
+        <li>No realiza diagnóstico médico automático (solo tendencias orientativas)</li>
+        <li>Sin integración con wearables (Apple Watch, pulseras de actividad)</li>
+        <li>Sin soporte multi-idioma en la primera versión</li>
+        <li>Sin sincronización en tiempo real entre dispositivos (sí exportación/importación manual)</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ SECTION: PRESUPUESTO ══════════ -->
+<section class="slide-section" data-num="03" id="presupuesto">
+  <div class="section-num">Sección 03</div>
+  <h2 class="slide-title">Presupuesto Detallado</h2>
+  <p style="color:var(--muted); font-size:15px; max-width:560px;">Estimación ascendente (Bottom-Up) siguiendo PMBOK Cap. 7 — costos en MXN.</p>
+</section>
+
+<section class="slide">
+  <div class="section-num">03 — Resumen de Presupuesto</div>
+  <h2 class="slide-title">Distribución de <span>Costos</span></h2>
+  <div class="grid-4" style="margin-bottom:28px;">
+    <div class="metric-card">
+      <div class="metric-value">$104,000</div>
+      <div class="metric-label">Recursos Humanos (82.5%)</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-value" style="color:var(--accent2)">$5,950</div>
+      <div class="metric-label">Infraestructura y Software (4.7%)</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-value" style="color:var(--accent3)">$10,250</div>
+      <div class="metric-label">Equipamiento y Materiales (8.1%)</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-value" style="color:var(--amber)">$145,145</div>
+      <div class="metric-label">Presupuesto Total del Proyecto</div>
+    </div>
+  </div>
+
+  <div style="margin-bottom:24px;">
+    <div class="budget-bar-container">
+      <div class="budget-bar-header"><span class="budget-bar-label">Recursos Humanos</span><span class="budget-bar-amount">$104,000 MXN</span></div>
+      <div class="budget-bar-track"><div class="budget-bar-fill" style="width:82.5%;background:var(--accent);"></div></div>
+    </div>
+    <div class="budget-bar-container">
+      <div class="budget-bar-header"><span class="budget-bar-label">Equipamiento y Materiales</span><span class="budget-bar-amount">$10,250 MXN</span></div>
+      <div class="budget-bar-track"><div class="budget-bar-fill" style="width:8.1%;background:var(--accent3);"></div></div>
+    </div>
+    <div class="budget-bar-container">
+      <div class="budget-bar-header"><span class="budget-bar-label">Infraestructura y Software</span><span class="budget-bar-amount">$5,950 MXN</span></div>
+      <div class="budget-bar-track"><div class="budget-bar-fill" style="width:4.7%;background:var(--accent2);"></div></div>
+    </div>
+    <div class="budget-bar-container">
+      <div class="budget-bar-header"><span class="budget-bar-label">Reserva de Contingencia (15%)</span><span class="budget-bar-amount">$18,030 MXN</span></div>
+      <div class="budget-bar-track"><div class="budget-bar-fill" style="width:12.4%;background:var(--amber);"></div></div>
+    </div>
+  </div>
+
+  <div class="highlight-box">
+    <strong>Costo Directo Total:</strong> $120,200 MXN + Reserva de Contingencia 15% ($18,030) + Reserva de Gestión 5% sobre total = <strong>$145,145 MXN presupuesto total.</strong>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="section-num">03.2 — Recursos Humanos</div>
+  <h2 class="slide-title">Equipo de <span>Desarrollo</span></h2>
+  <table class="styled-table">
+    <thead>
+      <tr><th>Rol</th><th>Responsable</th><th>Hrs/Sem</th><th>Semanas</th><th>Total Hrs</th><th>Tarifa MXN/hr</th><th>Subtotal MXN</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Líder de Proyecto / Arq. Software</td><td>Juan Ferrer</td><td>12</td><td>10</td><td>120</td><td>$180</td><td style="color:var(--accent)">$21,600</td></tr>
+      <tr><td>Desarrollador Backend (Python/FastAPI)</td><td>Jonathan Chi</td><td>15</td><td>10</td><td>150</td><td>$160</td><td style="color:var(--accent)">$24,000</td></tr>
+      <tr><td>Desarrollador Frontend (React)</td><td>Samantha Durán</td><td>15</td><td>10</td><td>150</td><td>$160</td><td style="color:var(--accent)">$24,000</td></tr>
+      <tr><td>Analista de Datos / IA</td><td>Dariana Echeverria</td><td>12</td><td>10</td><td>120</td><td>$170</td><td style="color:var(--accent)">$20,400</td></tr>
+      <tr><td>QA/Tester & Documentación</td><td>Yeshua Estrada</td><td>10</td><td>10</td><td>100</td><td>$140</td><td style="color:var(--accent)">$14,000</td></tr>
+      <tr><td colspan="4" style="font-family:'Syne',sans-serif;font-weight:700;color:var(--white)">SUBTOTAL RRHH</td><td style="color:var(--white);font-weight:500">640 hrs</td><td></td><td style="color:var(--amber);font-family:'Syne',sans-serif;font-weight:800">$104,000</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ══════════ SECTION: CRONOGRAMA ══════════ -->
+<section class="slide-section" data-num="04" id="cronograma">
+  <div class="section-num">Sección 04</div>
+  <h2 class="slide-title">Cronograma del Proyecto</h2>
+  <p style="color:var(--muted); font-size:15px; max-width:560px;">47 entradas — 7 fases, 33 tareas, 6 hitos. Inicio: 05/01/2026 · Cierre: 17/11/2026.</p>
+</section>
+
+<section class="slide">
+  <div class="section-num">04 — Fases del Proyecto</div>
+  <h2 class="slide-title">Programación de <span>Fases y Hitos</span></h2>
+  <div class="grid-2">
+    <div>
+      <div class="timeline">
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-phase">Fase 1 — 21 días</div>
+          <div class="tl-name">Inicio y Planificación</div>
+          <div class="tl-date">05/01/2026 → 03/02/2026</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:4px">Alcance, stakeholders, Project Charter, viabilidad, objetivos SMART</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot" style="background:var(--accent2)"></div>
+          <div class="tl-phase">Fase 2 — 41 días</div>
+          <div class="tl-name">Análisis y Diseño</div>
+          <div class="tl-date">04/02/2026 → 03/04/2026</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:4px">Investigación, requerimientos, base de datos, formularios, protocolos</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot" style="background:var(--accent3)"></div>
+          <div class="tl-phase">Fase 3 — 20 días</div>
+          <div class="tl-name">Adquisiciones</div>
+          <div class="tl-date">03/04/2026 → 01/05/2026</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:4px">Cotizaciones, compra de equipos médicos, software y personal</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot" style="background:var(--amber)"></div>
+          <div class="tl-phase">Fase 4 — 57 días</div>
+          <div class="tl-name">Desarrollo en Microsoft Access</div>
+          <div class="tl-date">04/05/2026 → 23/07/2026</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:4px">Tablas, consultas SQL, formularios PA/sueño, alertas, reportes</div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="timeline">
+        <div class="tl-item">
+          <div class="tl-dot" style="background:var(--red)"></div>
+          <div class="tl-phase">Fase 5 — 48 días</div>
+          <div class="tl-name">Pruebas y Validación</div>
+          <div class="tl-date">24/07/2026 → 29/09/2026</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:4px">Unitarias, integración, piloto 20 pacientes, validación clínica</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot" style="background:var(--accent)"></div>
+          <div class="tl-phase">Fase 6 — 14 días</div>
+          <div class="tl-name">Capacitación</div>
+          <div class="tl-date">30/09/2026 → 19/10/2026</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:4px">Personal médico, pacientes, manuales de usuario y guías</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot" style="background:var(--accent2)"></div>
+          <div class="tl-phase">Fase 7 — 24 días</div>
+          <div class="tl-name">Cierre del Proyecto</div>
+          <div class="tl-date">20/10/2026 → 23/11/2026</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:4px">Implementación final, documentación, evaluación post-impl., lecciones</div>
+        </div>
+      </div>
+      <div class="card" style="margin-top:16px">
+        <div style="font-family:'Syne',sans-serif;font-size:12px;font-weight:700;color:var(--accent);margin-bottom:10px;text-transform:uppercase;letter-spacing:.5px">Hitos Clave</div>
+        <div style="font-size:13px;color:var(--muted);display:flex;flex-direction:column;gap:6px;">
+          <div>🔷 <strong style="color:var(--white)">03/02/26</strong> — Planificación aprobada</div>
+          <div>🔷 <strong style="color:var(--white)">03/04/26</strong> — Diseño aprobado</div>
+          <div>🔷 <strong style="color:var(--white)">01/05/26</strong> — Recursos adquiridos</div>
+          <div>🔷 <strong style="color:var(--white)">21/07/26</strong> — Sistema desarrollado</div>
+          <div>🔷 <strong style="color:var(--white)">29/09/26</strong> — Sistema validado</div>
+          <div>🔷 <strong style="color:var(--white)">23/11/26</strong> — Proyecto cerrado</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="section-num">04.2 — Evidencia Visual del Cronograma</div>
+  <h2 class="slide-title">Capturas del <span>Cronograma</span></h2>
+  
+  <!-- IMÁGENES MÁS GRANDES: Una columna, ancho completo, tamaño muy ampliado -->
+  <div style="display:flex; flex-direction:column; gap:48px;">
+    <!-- Imagen 1 - Tamaño grande -->
+    <div style="display:flex; flex-direction:column; gap:12px;">
+      <img src="1.jpeg" alt="Cronograma parte 1"
+        style="width:100%; max-width:100%; height:auto; min-height:380px; border-radius:20px; border:1px solid rgba(255,255,255,0.2); display:block; background:rgba(255,255,255,0.05); box-shadow: 0 12px 28px rgba(0,0,0,0.4); object-fit:contain;"
+        onerror="this.style.minHeight='380px'; this.style.display='flex'; this.insertAdjacentHTML('afterend','<div style=\'min-height:380px; border-radius:20px; border:2px dashed rgba(79,200,232,0.5); display:flex; align-items:center; justify-content:center; font-size:18px; color:#4FC8E8; background:rgba(0,0,0,0.3);\'>📸 1.jpeg (vista ampliada)</div>'); this.remove();">
+      
+    </div>
+
+    <!-- Imagen 2 - Tamaño grande -->
+    <div style="display:flex; flex-direction:column; gap:12px;">
+      <img src="2.jpeg" alt="Cronograma parte 2"
+        style="width:100%; max-width:100%; height:auto; min-height:380px; border-radius:20px; border:1px solid rgba(255,255,255,0.2); display:block; background:rgba(255,255,255,0.05); box-shadow: 0 12px 28px rgba(0,0,0,0.4); object-fit:contain;"
+        onerror="this.style.minHeight='380px'; this.insertAdjacentHTML('afterend','<div style=\'min-height:380px; border-radius:20px; border:2px dashed rgba(79,200,232,0.5); display:flex; align-items:center; justify-content:center; font-size:18px; color:#4FC8E8; background:rgba(0,0,0,0.3);\'>📸 2.jpeg (vista ampliada)</div>'); this.remove();">
+      
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ SECTION: CALIDAD ══════════ -->
+<section class="slide-section" data-num="05" id="calidad">
+  <div class="section-num">Sección 05</div>
+  <h2 class="slide-title">Gestión de la Calidad</h2>
+  <p style="color:var(--muted); font-size:15px; max-width:560px;">Listas de cotejo por módulo: PA, Sueño, Panel Médico y Calidad Técnica. Todos los ítems: Conforme ✓</p>
+</section>
+
+<section class="slide">
+  <div class="section-num">05 — Listas de Cotejo</div>
+  <h2 class="slide-title">Control de <span>Calidad por Módulo</span></h2>
+  <div class="grid-2">
+    <div>
+      <div style="font-family:'Syne',sans-serif;font-size:12px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;">Módulo PA (10 ítems)</div>
+      <div class="check-item"><span class="check-icon">✓</span><div><div class="check-label">Clasificación AHA/ACC 2017</div><div class="check-sub">Normal &lt;120/80 · Elevada · HTA G1 · HTA G2</div></div></div>
+      <div class="check-item"><span class="check-icon">✓</span><div><div class="check-label">Validación de rango sistólica</div><div class="check-sub">Rechazo de valores fuera de 70–250 mmHg</div></div></div>
+      <div class="check-item"><span class="check-icon">✓</span><div><div class="check-label">Validación de rango diastólica</div><div class="check-sub">Rechazo de valores fuera de 40–150 mmHg</div></div></div>
+      <div class="check-item"><span class="check-icon">✓</span><div><div class="check-label">Alerta automática HTA G2</div><div class="check-sub">Banner visible cuando PA ≥ 180/120</div></div></div>
+      <div class="check-item"><span class="check-icon">✓</span><div><div class="check-label">Gráfica de tendencia 7 días</div><div class="check-sub">Sistólica, diastólica y pulso en serie de líneas</div></div></div>
+      <div class="check-item"><span class="check-icon">✓</span><div><div class="check-label">Exportación a CSV funcional</div><div class="check-sub">Columnas: fecha, sys, dia, pulso, brazo</div></div></div>
+      <div class="check-item"><span class="check-icon">✓</span><div><div class="check-label">Persistencia entre sesiones</div><div class="check-sub">Datos recuperables tras cerrar navegador</div></div></div>
+    </div>
+    <div>
+      <div style="font-family:'Syne',sans-serif;font-size:12px;font-weight:700;color:var(--accent2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;">Módulo Sueño &amp; Panel Médico</div>
+      <div class="check-item"><span class="check-icon" style="color:var(--accent2)">✓</span><div><div class="check-label">Cálculo automático de duración</div><div class="check-sub">Diferencia hora-acostarse y hora-despertar en hh:mm</div></div></div>
+      <div class="check-item"><span class="check-icon" style="color:var(--accent2)">✓</span><div><div class="check-label">Escala de calidad 1–5 estrellas</div><div class="check-sub">Visualización interactiva seleccionable</div></div></div>
+      <div class="check-item"><span class="check-icon" style="color:var(--accent2)">✓</span><div><div class="check-label">Escala de estrés 0–10</div><div class="check-sub">Deslizador con etiqueta numérica visible</div></div></div>
+      <div class="check-item"><span class="check-icon" style="color:var(--accent2)">✓</span><div><div class="check-label">Alerta en tiempo real HTA G2</div><div class="check-sub">Banner rojo con nombre del paciente afectado</div></div></div>
+      <div class="check-item"><span class="check-icon" style="color:var(--accent2)">✓</span><div><div class="check-label">Tabla resumen multi-paciente</div><div class="check-sub">PA reciente, pulso, horas sueño y calidad</div></div></div>
+      <div class="check-item"><span class="check-icon" style="color:var(--accent2)">✓</span><div><div class="check-label">Carga de pantalla &lt; 2 segundos</div><div class="check-sub">Medido con Lighthouse / DevTools Network</div></div></div>
+      <div class="check-item"><span class="check-icon" style="color:var(--accent2)">✓</span><div><div class="check-label">Interfaz responsive</div><div class="check-sub">Sin overflow en 360 px (móvil, tablet, desktop)</div></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="section-num">05.5 — Calidad Técnica y Seguridad</div>
+  <h2 class="slide-title">Seguridad e <span>Infraestructura</span></h2>
+  <div class="grid-2">
+    <div>
+      <div class="check-item"><span class="check-icon">✓</span><div><div class="check-label">Autenticación de usuario</div><div class="check-sub">Login con email + contraseña, sesión JWT</div></div></div>
+      <div class="check-item"><span class="check-icon">✓</span><div><div class="check-label">HTTPS habilitado en producción</div><div class="check-sub">Certificado SSL válido, sin advertencias en navegador</div></div></div>
+      <div class="check-item"><span class="check-icon">✓</span><div><div class="check-label">Datos de salud cifrados</div><div class="check-sub">AES-256 en base de datos para PA y sueño</div></div></div>
+      <div class="check-item"><span class="check-icon">✓</span><div><div class="check-label">Pruebas unitarias ≥ 70%</div><div class="check-sub">pytest + coverage report publicado en CI/CD</div></div></div>
+    </div>
+    <div>
+      <div class="check-item"><span class="check-icon">✓</span><div><div class="check-label">Lint sin errores críticos</div><div class="check-sub">ESLint (frontend) y Flake8 (backend) en cero errores</div></div></div>
+      <div class="check-item"><span class="check-icon">✓</span><div><div class="check-label">Dockerización del stack completo</div><div class="check-sub">docker-compose up levanta frontend, backend y DB</div></div></div>
+      <div class="check-item"><span class="check-icon">✓</span><div><div class="check-label">Variables sensibles en env</div><div class="check-sub">Secrets gestionados con GitHub Secrets/dotenv</div></div></div>
+      <div class="check-item"><span class="check-icon">✓</span><div><div class="check-label">Manual de usuario entregado</div><div class="check-sub">Documento PDF con capturas y flujos de uso (18 pp.)</div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ SECTION: RIESGOS ══════════ -->
+<section class="slide-section" data-num="06" id="riesgos">
+  <div class="section-num">Sección 06</div>
+  <h2 class="slide-title">Matriz de Riesgos</h2>
+  <p style="color:var(--muted); font-size:15px; max-width:560px;">12 riesgos identificados. Escala P × I (1–5). Categorías: Bajo 1-4 · Moderado 5-9 · Alto 10-19 · Crítico 20-25.</p>
+</section>
+
+<section class="slide">
+  <div class="section-num">06 — Registro de Riesgos</div>
+  <h2 class="slide-title">Mapa de Calor <span>P × I</span></h2>
+
+  <!-- Legend -->
+  <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:20px;">
+    <span class="badge badge-red">Crítico 20-25</span>
+    <span class="badge badge-amber">Alto 10-19</span>
+    <span class="badge badge-blue">Moderado 5-9</span>
+    <span class="badge badge-green">Bajo 1-4</span>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:6px;">
+    <!-- Critical -->
+    <div class="risk-row" style="border-left:3px solid var(--red);">
+      <div><div class="risk-id">R-01</div><span class="badge badge-red">PxI: 20</span></div>
+      <div><div class="risk-name">Alucinaciones de IA generativa</div><div class="risk-desc">Tokens insuficientes/prompt mal diseñado · Estrategia: Mitigar (Yeshua) · Few-shot prompts + validación determinista</div></div>
+      <span class="badge badge-red">Crítico</span>
+    </div>
+    <div class="risk-row" style="border-left:3px solid var(--red);">
+      <div><div class="risk-id">R-03</div><span class="badge badge-red">PxI: 25</span></div>
+      <div><div class="risk-name">Pérdida de datos en base de datos</div><div class="risk-desc">Fallo del servidor o error en migración · Estrategia: Evitar (Jonathan) · Backup diario S3 + Replicación DigitalOcean</div></div>
+      <span class="badge badge-red">Crítico</span>
+    </div>
+    <div class="risk-row" style="border-left:3px solid var(--red);">
+      <div><div class="risk-id">R-04</div><span class="badge badge-red">PxI: 25</span></div>
+      <div><div class="risk-name">Brecha de seguridad — datos de salud</div><div class="risk-desc">Vulnerabilidad en API o contraseñas débiles · Estrategia: Evitar (Jonathan) · AES-256, HTTPS, JWT, pentesting</div></div>
+      <span class="badge badge-red">Crítico</span>
+    </div>
+    <div class="risk-row" style="border-left:3px solid var(--red);">
+      <div><div class="risk-id">R-09</div><span class="badge badge-red">PxI: 25</span></div>
+      <div><div class="risk-name">Clasificación errónea de PA (falso negativo HTA G2)</div><div class="risk-desc">Bug en lógica AHA 2017 · Estrategia: Aceptar (Samantha) · Suite unitaria con casos borde + review médico</div></div>
+      <span class="badge badge-red">Crítico</span>
+    </div>
+    <!-- High -->
+    <div class="risk-row" style="border-left:3px solid var(--amber);">
+      <div><div class="risk-id">R-02</div><span class="badge badge-amber">PxI: 12</span></div>
+      <div><div class="risk-name">Latencia API OpenAI &gt; 3 s en producción</div><div class="risk-desc">Carga concurrente o cuota excedida · Mitigar (Yeshua) · Caché Redis + fallback análisis local</div></div>
+      <span class="badge badge-amber">Alto</span>
+    </div>
+    <div class="risk-row" style="border-left:3px solid var(--amber);">
+      <div><div class="risk-id">R-07</div><span class="badge badge-amber">PxI: 8</span></div>
+      <div><div class="risk-name">Incompatibilidad dependencias Python/Node</div><div class="risk-desc">Versiones diferentes en máquinas del equipo · Evitar (Juan F.) · Dockerizar todo + fijar versiones</div></div>
+      <span class="badge badge-amber">Alto</span>
+    </div>
+    <!-- Moderate -->
+    <div class="risk-row" style="border-left:3px solid var(--accent);">
+      <div><div class="risk-id">R-05</div><span class="badge badge-blue">PxI: 9</span></div>
+      <div><div class="risk-name">Ausencia de miembro clave del equipo</div><div class="risk-desc">Enfermedad, abandono, carga académica · Mitigar (Dariana) · Jira + Wiki GitHub + pair-programming</div></div>
+      <span class="badge badge-blue">Moderado</span>
+    </div>
+    <div class="risk-row" style="border-left:3px solid var(--accent);">
+      <div><div class="risk-id">R-06</div><span class="badge badge-blue">PxI: 9</span></div>
+      <div><div class="risk-name">Cambios de requerimientos a mitad del proyecto</div><div class="risk-desc">Solicitudes sin proceso formal · Evitar (Dariana) · Control de cambios formal (CR) aprobado por patrocinador</div></div>
+      <span class="badge badge-blue">Moderado</span>
+    </div>
+    <div class="risk-row" style="border-left:3px solid var(--accent);">
+      <div><div class="risk-id">R-08</div><span class="badge badge-blue">PxI: 9</span></div>
+      <div><div class="risk-name">Sobrecosto por consumo de tokens OpenAI</div><div class="risk-desc">Consultas frecuentes sin optimización · Mitigar (Samantha) · Límite mensual en dashboard OpenAI + gpt-4o-mini</div></div>
+      <span class="badge badge-blue">Moderado</span>
+    </div>
+    <div class="risk-row" style="border-left:3px solid var(--accent);">
+      <div><div class="risk-id">R-10</div><span class="badge badge-blue">PxI: 9</span></div>
+      <div><div class="risk-name">Retraso en entrega final del proyecto</div><div class="risk-desc">Subestimación de tareas de integración · Aceptar (Dariana) · Buffer 3 días + daily stand-up 15 min</div></div>
+      <span class="badge badge-blue">Moderado</span>
+    </div>
+    <!-- Low -->
+    <div class="risk-row" style="border-left:3px solid var(--accent3);">
+      <div><div class="risk-id">R-11</div><span class="badge badge-green">PxI: 3</span></div>
+      <div><div class="risk-name">Caída del servicio de nube (DigitalOcean)</div><div class="risk-desc">Mantenimiento o fallo del proveedor · Mitigar (Jonathan) · SLA 99.9% + UptimeRobot</div></div>
+      <span class="badge badge-green">Bajo</span>
+    </div>
+    <div class="risk-row" style="border-left:3px solid var(--accent3);">
+      <div><div class="risk-id">R-12</div><span class="badge badge-green">PxI: 4</span></div>
+      <div><div class="risk-name">Baja adopción del personal médico</div><div class="risk-desc">Interfaz compleja para usuarios no técnicos · Mitigar (Juan F.) · Capacitación 1h + manual + video tutorial</div></div>
+      <span class="badge badge-green">Bajo</span>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ SECTION: ADQUISICIONES ══════════ -->
+<section class="slide-section" data-num="07" id="adquisiciones">
+  <div class="section-num">Sección 07</div>
+  <h2 class="slide-title">Gestión de las Adquisiciones</h2>
+  <p style="color:var(--muted); font-size:15px; max-width:560px;">Calendario de compras — 25 ítems en 8 categorías. Total: $886,650 MXN.</p>
+</section>
+
+<section class="slide">
+  <div class="section-num">07 — Resumen Ejecutivo de Adquisiciones</div>
+  <h2 class="slide-title">Presupuesto por <span>Categoría</span></h2>
+  <div class="grid-4" style="margin-bottom:24px;">
+    <div class="metric-card"><div class="metric-value" style="font-size:20px">$207,050</div><div class="metric-label">Equipos Médicos (5 ítems)</div></div>
+    <div class="metric-card"><div class="metric-value" style="font-size:20px;color:var(--accent2)">$297,600</div><div class="metric-label">Tecnología (3 ítems)</div></div>
+    <div class="metric-card"><div class="metric-value" style="font-size:20px;color:var(--accent3)">$133,800</div><div class="metric-label">Servicios (4 ítems)</div></div>
+    <div class="metric-card"><div class="metric-value" style="font-size:20px;color:var(--amber)">$108,500</div><div class="metric-label">Infraestructura (3 ítems)</div></div>
+  </div>
+  <div class="grid-2">
+    <div>
+      <table class="styled-table">
+        <thead><tr><th>Categoría</th><th>Ítems</th><th>Subtotal MXN</th></tr></thead>
+        <tbody>
+          <tr><td>Equipos Médicos</td><td>5</td><td style="color:var(--accent)">$207,050</td></tr>
+          <tr><td>Insumos Médicos</td><td>3</td><td style="color:var(--accent)">$16,850</td></tr>
+          <tr><td>Tecnología</td><td>3</td><td style="color:var(--accent)">$297,600</td></tr>
+          <tr><td>Software</td><td>3</td><td style="color:var(--accent)">$66,750</td></tr>
+          <tr><td>Infraestructura</td><td>3</td><td style="color:var(--accent)">$108,500</td></tr>
+          <tr><td>Mobiliario</td><td>2</td><td style="color:var(--accent)">$41,600</td></tr>
+          <tr><td>Servicios</td><td>4</td><td style="color:var(--accent)">$133,800</td></tr>
+          <tr><td>Papelería</td><td>2</td><td style="color:var(--accent)">$14,500</td></tr>
+          <tr><td style="font-family:'Syne',sans-serif;font-weight:700;color:var(--white)" colspan="2">TOTAL GENERAL</td><td style="color:var(--amber);font-family:'Syne',sans-serif;font-weight:800">$886,650</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div>
+      <div style="font-family:'Syne',sans-serif;font-size:12px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;">Ventanas de Adquisición</div>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <div class="card" style="padding:12px 16px;">
+          <div style="font-size:12px;color:var(--accent);font-weight:500">Ventana 1 — Marzo 2026</div>
+          <div style="font-size:13px;color:var(--white)">Equipos médicos e insumos</div>
+        </div>
+        <div class="card" style="padding:12px 16px;">
+          <div style="font-size:12px;color:var(--accent2);font-weight:500">Ventana 2 — Marzo–Abril 2026</div>
+          <div style="font-size:13px;color:var(--white)">Tecnología, software y mobiliario</div>
+        </div>
+        <div class="card" style="padding:12px 16px;">
+          <div style="font-size:12px;color:var(--accent3);font-weight:500">Ventana 3 — Abril 2026</div>
+          <div style="font-size:13px;color:var(--white)">Infraestructura crítica (servidor, red, UPS)</div>
+        </div>
+        <div class="card" style="padding:12px 16px;">
+          <div style="font-size:12px;color:var(--amber);font-weight:500">Ventana 4 — Febrero 2026</div>
+          <div style="font-size:13px;color:var(--white)">Consultoría médica especializada (temprana)</div>
+        </div>
+        <div class="card" style="padding:12px 16px;">
+          <div style="font-size:12px;color:var(--red);font-weight:500">Ventana 5 — Julio–Agosto 2026</div>
+          <div style="font-size:13px;color:var(--white)">Capacitación e impresión de manuales</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ SECTION: CIERRE ══════════ -->
+<section class="slide-section" data-num="08" id="cierre">
+  <div class="section-num">Sección 08</div>
+  <h2 class="slide-title">Reporte Final de Culminación</h2>
+  <p style="color:var(--muted); font-size:15px; max-width:560px;">Métricas finales, entregables, lecciones aprendidas y declaración formal de cierre.</p>
+</section>
+
+<section class="slide">
+  <div class="section-num">08.1-08.2 — Resumen Ejecutivo y Métricas</div>
+  <h2 class="slide-title">Métricas Finales <span>del Proyecto</span></h2>
+  <p style="font-size:14px;color:var(--muted);margin-bottom:24px;max-width:640px;">Iniciado en marzo de 2026, culminado formalmente el <strong style="color:var(--white)">13 de mayo de 2026</strong>. Sistema entregado funcional, documentado y Dockerizado.</p>
+  <div class="grid-4" style="margin-bottom:24px;">
+    <div class="metric-card"><div class="metric-value" style="color:var(--accent3)">10 sem</div><div class="metric-label">Duración total · En plazo ✓</div></div>
+    <div class="metric-card"><div class="metric-value" style="color:var(--accent3)">-4.3%</div><div class="metric-label">Variación presupuesto · Bajo budget ✓</div></div>
+    <div class="metric-card"><div class="metric-value" style="color:var(--accent3)">78%</div><div class="metric-label">Cobertura pruebas unitarias (+8% plan)</div></div>
+    <div class="metric-card"><div class="metric-value" style="color:var(--amber)">4.6/5</div><div class="metric-label">Satisfacción del usuario médico ✔</div></div>
+  </div>
+  <div class="grid-4">
+    <div class="metric-card"><div class="metric-value" style="color:var(--accent3)">30/30</div><div class="metric-label">Tareas WBS completadas ✓</div></div>
+    <div class="metric-card"><div class="metric-value" style="color:var(--accent3)">0</div><div class="metric-label">Defectos críticos en producción ✓</div></div>
+    <div class="metric-card"><div class="metric-value" style="color:var(--accent3)">1.4 s</div><div class="metric-label">Tiempo de carga (&lt;2 s meta) ✓</div></div>
+    <div class="metric-card"><div class="metric-value" style="color:var(--accent3)">2/12</div><div class="metric-label">Riesgos materializados (R-05, R-08)</div></div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="section-num">08.3 — Entregables Completados</div>
+  <h2 class="slide-title">12 Entregables <span>del Proyecto</span></h2>
+  <div class="grid-2">
+    <div style="display:flex;flex-direction:column;gap:7px;">
+      <div class="check-item"><span class="check-icon">✓</span><div><div class="check-label">Acta Constitutiva del Proyecto</div><div class="check-sub">Dariana E. · 01/03/2026</div></div></div>
+      <div class="check-item"><span class="check-icon">✓</span><div><div class="check-label">Documento de Alcance y WBS</div><div class="check-sub">Equipo 2 · 10/03/2026</div></div></div>
+      <div class="check-item"><span class="check-icon">✓</span><div><div class="check-label">Diseño UI/UX (Figma 12 pantallas)</div><div class="check-sub">Juan F. · 20/03/2026</div></div></div>
+      <div class="check-item"><span class="check-icon">✓</span><div><div class="check-label">Backend FastAPI + modelos de datos PostgreSQL</div><div class="check-sub">Jonathan C. · 10/04/2026</div></div></div>
+      <div class="check-item"><span class="check-icon">✓</span><div><div class="check-label">Frontend React — Panel médico + formularios</div><div class="check-sub">Juan F. · 18/04/2026</div></div></div>
+      <div class="check-item"><span class="check-icon">✓</span><div><div class="check-label">Módulo IA — LangChain + GPT-4o-mini</div><div class="check-sub">Yeshua E. · 25/04/2026</div></div></div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:7px;">
+      <div class="check-item"><span class="check-icon">✓</span><div><div class="check-label">Suite de pruebas (pytest + cobertura 78%)</div><div class="check-sub">Samantha D. · 02/05/2026</div></div></div>
+      <div class="check-item"><span class="check-icon">✓</span><div><div class="check-label">Dockerización completa (docker-compose)</div><div class="check-sub">Yeshua E. · 05/05/2026</div></div></div>
+      <div class="check-item"><span class="check-icon">✓</span><div><div class="check-label">Manual de usuario (PDF, 18 pp.)</div><div class="check-sub">Samantha D. · 10/05/2026</div></div></div>
+      <div class="check-item"><span class="check-icon">✓</span><div><div class="check-label">Manual técnico / documentación de API</div><div class="check-sub">Jonathan C. · 10/05/2026</div></div></div>
+      <div class="check-item"><span class="check-icon">✓</span><div><div class="check-label">Documentación PMI (Reporte 15)</div><div class="check-sub">Equipo 2 · 13/05/2026</div></div></div>
+      <div class="check-item"><span class="check-icon">✓</span><div><div class="check-label">Capacitación al personal médico (1 h)</div><div class="check-sub">Dariana E. · 13/05/2026</div></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="section-num">08.4 — Riesgos Materializados</div>
+  <h2 class="slide-title">Lecciones <span>Aprendidas</span></h2>
+  <div style="display:flex;flex-direction:column;gap:14px;margin-bottom:28px;">
+    <div class="card" style="border-left:3px solid var(--amber);">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;flex-wrap:wrap;">
+        <div>
+          <div style="font-family:'Syne',sans-serif;font-size:11px;font-weight:700;color:var(--amber);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;">R-05 — Ausencia de miembro clave</div>
+          <div style="font-size:13px;color:var(--white);margin-bottom:4px;">Retraso de 2 días en Sprint 3</div>
+          <div style="font-size:12px;color:var(--muted);">Respuesta: Pair-programming + redistribución de tareas</div>
+        </div>
+        <div style="border-left:1px solid var(--card-border);padding-left:16px;">
+          <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">Lección aprendida</div>
+          <div style="font-size:13px;color:var(--off-white);">Documentar el trabajo diariamente evita silos de conocimiento.</div>
+        </div>
+      </div>
+    </div>
+    <div class="card" style="border-left:3px solid var(--amber);">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+        <div>
+          <div style="font-family:'Syne',sans-serif;font-size:11px;font-weight:700;color:var(--amber);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;">R-08 — Sobrecosto tokens OpenAI (parcial)</div>
+          <div style="font-size:13px;color:var(--white);margin-bottom:4px;">Gasto adicional de $620 MXN en tokens</div>
+          <div style="font-size:12px;color:var(--muted);">Respuesta: Cambio a gpt-4o-mini + caché implementado</div>
+        </div>
+        <div style="border-left:1px solid var(--card-border);padding-left:16px;">
+          <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">Lección aprendida</div>
+          <div style="font-size:13px;color:var(--off-white);">Monitorear el uso de API desde el Sprint 1, no al final.</div>
+        </div>
+      </div>
+    </div>
+    <div class="card" style="border-left:3px solid var(--accent3);">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+        <div>
+          <div style="font-family:'Syne',sans-serif;font-size:11px;font-weight:700;color:var(--accent3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;">R-01 — Alucinaciones IA (No ocurrió)</div>
+          <div style="font-size:13px;color:var(--white);margin-bottom:4px;">Ningún caso en producción</div>
+          <div style="font-size:12px;color:var(--muted);">Respuesta: Validación determinista pre-display funcionó</div>
+        </div>
+        <div style="border-left:1px solid var(--card-border);padding-left:16px;">
+          <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">Lección aprendida</div>
+          <div style="font-size:13px;color:var(--off-white);">La combinación IA + reglas de negocio es más robusta que IA sola.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="section-num">08.5-08.6 — Criterios de Aceptación y Cierre Formal</div>
+  <h2 class="slide-title">Declaración <span>Formal de Cierre</span></h2>
+  <div class="grid-2" style="margin-bottom:24px;">
+    <div>
+      <div style="font-family:'Syne',sans-serif;font-size:12px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;">Criterios de Aceptación ✓</div>
+      <div class="check-item"><span class="check-icon">✓</span><div><div class="check-label">Clasificación PA AHA/ACC 2017 al 100%</div><div class="check-sub">Suite pytest — 48 casos aprobados</div></div></div>
+      <div class="check-item"><span class="check-icon">✓</span><div><div class="check-label">Panel médico multiusuario con alertas HTA G2</div><div class="check-sub">Demo grabado + revisión en producción</div></div></div>
+      <div class="check-item"><span class="check-icon">✓</span><div><div class="check-label">Correlación PA vs. sueño con análisis por IA</div><div class="check-sub">Pestaña Correlación LangChain log</div></div></div>
+      <div class="check-item"><span class="check-icon">✓</span><div><div class="check-label">Exportación a CSV funcional (PA y sueño)</div><div class="check-sub">Prueba manual QA checklist ítem 9</div></div></div>
+      <div class="check-item"><span class="check-icon">✓</span><div><div class="check-label">Tiempo de carga &lt; 2 s (20 Mbps)</div><div class="check-sub">Lighthouse: 1.4 s FCP</div></div></div>
+      <div class="check-item"><span class="check-icon">✓</span><div><div class="check-label">Interfaz responsive 360/768/1280 px</div><div class="check-sub">Chrome DevTools + prueba en móvil real</div></div></div>
+      <div class="check-item"><span class="check-icon">✓</span><div><div class="check-label">Datos cifrados + acceso protegido por JWT</div><div class="check-sub">Reporte de seguridad OWASP básico</div></div></div>
+    </div>
+    <div>
+      <div class="highlight-box" style="margin-bottom:16px;">
+        El equipo declara que todos los entregables han sido <strong>completados, verificados y aceptados</strong> conforme al alcance definido en el Plan de Gestión del Proyecto.
+      </div>
+      <div class="card">
+        <div style="font-family:'Syne',sans-serif;font-size:12px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;">Cierre Formal</div>
+        <div style="font-size:13px;color:var(--muted);display:flex;flex-direction:column;gap:8px;">
+          <div>📁 <strong style="color:var(--white)">Repositorio:</strong> GitHub privado · Equipo 2/PA-Sueno</div>
+          <div>📅 <strong style="color:var(--white)">Fecha de cierre:</strong> 13 de mayo de 2026</div>
+          <div>📋 <strong style="color:var(--white)">Referencia:</strong> Proceso 4.7 — Cerrar el Proyecto o Fase · PMBOK® 7ª ed.</div>
+          <div>👨‍⚕️ <strong style="color:var(--white)">Estado:</strong> Sistema operativo para el personal médico</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="slide-footer">
+  <div class="footer-left">Universidad del Caribe · Administración de Proyectos de Software · Mayo 2026</div>
+  <div class="footer-right">EQUIPO 2 — PA &amp; SUEÑO</div>
+</footer>
+
+</div><!-- .presentation -->
+
+</body>
+</html>
